@@ -164,7 +164,7 @@
     "husky": "^5.1.2",
     "lint-staged": "^13.0.4",
     "mocha": "^10.1.0",
-    "mocha-teamcity-reporter": "^3.0.0",
+    "mocha-teamcity-reporter": "^4.2.0",
     "mock-fs": "^4.13.0",
     "ncp": "^2.0.0",
     "ovsx": "^0.8.3",
