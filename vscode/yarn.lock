@@ -3590,10 +3590,10 @@ mkdirp-classic@^0.5.2, mkdirp-classic@^0.5.3:
   resolved "https://registry.yarnpkg.com/mkdirp-classic/-/mkdirp-classic-0.5.3.tgz#fa10c9115cc6d8865be221ba47ee9bed78601113"
   integrity sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==
 
-mocha-teamcity-reporter@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/mocha-teamcity-reporter/-/mocha-teamcity-reporter-3.0.0.tgz#2c4776288f23dac61aa0fee5930571cc2a51df1a"
-  integrity sha512-FyGgmtFfW2nDwEZU3mrjQShAAK/zhGivwY4HCsqoDoyeS8vV8HGdq1Dn2P+SFaIoCeXTQ0Z+5xVRyikYaKrW5w==
+mocha-teamcity-reporter@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/mocha-teamcity-reporter/-/mocha-teamcity-reporter-4.2.0.tgz#95983d58ef99e85345a5bcd2fcb54325a3ad34cc"
+  integrity sha512-H08IvAIsiCcdXAEObzp/VvJHFfLummxt5wpr0gU4yxx6pTb7ZmKnVjyXkFi+3gYi3bu/j2iJdoK9Aknz16mbBg==
 
 mocha@^10.1.0:
   version "10.8.2"
