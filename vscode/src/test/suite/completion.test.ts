@@ -24,6 +24,7 @@ import {
   triggerInline,
   triggerSelectionAcceptance,
 } from "./utils/completion.utils";
+import NeoaiInlineCompletionItem from "../../inlineSuggestions/neoaiInlineCompletionItem";
 import { activate, getDocUri } from "./utils/helper";
 import {
   A_COMPLETION_PREFIX,
@@ -273,7 +274,7 @@ describe("Should do completion", () => {
     const suggestions = await getInlineCompletions(editor);
 
     expect(
-      suggestions?.items.find((i) => i.insertText === expectedPrefix)?.range
+      (suggestions?.items.find((i) => (i as NeoaiInlineCompletionItem).insertText === expectedPrefix) as NeoaiInlineCompletionItem | undefined)?.range
         ?.end,
       "should equal to current position"
     ).to.deep.equal(editor.selection.active);
@@ -293,7 +294,7 @@ describe("Should do completion", () => {
     const suggestions = await getInlineCompletions(editor);
 
     expect(
-      suggestions?.items.find((i) => i.insertText === expectedPrefix)?.range
+      (suggestions?.items.find((i) => (i as NeoaiInlineCompletionItem).insertText === expectedPrefix) as NeoaiInlineCompletionItem | undefined)?.range
         ?.end,
       "should equal to position after the suffix"
     ).to.deep.equal(

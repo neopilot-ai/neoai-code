@@ -2,6 +2,7 @@ import {
   authentication,
   AuthenticationProvider,
   AuthenticationProviderAuthenticationSessionsChangeEvent,
+  AuthenticationProviderSessionOptions,
   AuthenticationSession,
   commands,
   Disposable,
@@ -71,7 +72,7 @@ export default class NeoaiAuthenticationProvider
     return this.sessionsChangeEventEmitter.event;
   }
 
-  getSessions(): Promise<readonly AuthenticationSession[]> {
+  getSessions(scopes?: readonly string[], options?: AuthenticationProviderSessionOptions): Promise<AuthenticationSession[]> {
     const userData = this.authState.get().current;
 
     return Promise.resolve(userData ? [toSession(userData)] : []);
@@ -125,19 +126,24 @@ export default class NeoaiAuthenticationProvider
     if (!last && current) {
       this.sessionsChangeEventEmitter.fire({
         added: [toSession(current)],
+        removed: [],
+        changed: [],
       });
     }
 
     if (last && !current) {
       this.sessionsChangeEventEmitter.fire({
+        added: [],
         removed: [toSession(last)],
+        changed: [],
       });
     }
 
     if (last && current && last.accessToken !== current.accessToken) {
       this.sessionsChangeEventEmitter.fire({
-        removed: [toSession(last)],
         added: [toSession(current)],
+        removed: [toSession(last)],
+        changed: [],
       });
     }
   }

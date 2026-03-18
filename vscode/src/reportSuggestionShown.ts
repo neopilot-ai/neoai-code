@@ -1,15 +1,16 @@
 import * as vscode from "vscode";
-import NeoaiInlineCompletionItem from "./inlineSuggestions/neoaiInlineCompletionItem";
 import suggestionShown from "./binary/requests/suggestionShown";
 import { ResultEntry } from "./binary/requests/requests";
+import NeoaiInlineCompletionItem from "./inlineSuggestions/neoaiInlineCompletionItem";
 
 let lastShownSuggestion: ResultEntry | undefined | null;
 
 export default function reportSuggestionShown(
   document: vscode.TextDocument,
-  completions?: vscode.InlineCompletionList<NeoaiInlineCompletionItem>
+  completions?: vscode.InlineCompletionList
 ): void {
-  const item = completions?.items[0]?.suggestionEntry;
+  const firstItem = completions?.items[0] as NeoaiInlineCompletionItem | undefined;
+  const item = firstItem?.suggestionEntry;
 
   if (item && !lastShownSuggestion?.new_prefix.endsWith(item.new_prefix)) {
     void suggestionShown({

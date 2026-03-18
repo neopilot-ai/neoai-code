@@ -2,8 +2,9 @@ import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "@rollup/plugin-typescript";
 import dts from "rollup-plugin-dts";
-import banner2 from 'rollup-plugin-banner2'
-import packageJson from "./package.json" assert { type: "json" };
+import banner2 from 'rollup-plugin-banner2';
+import postcss from 'rollup-plugin-postcss';
+import packageJson from "./package.json" with { type: "json" };
 
 const version = packageJson.version ?? null;
 
@@ -25,6 +26,7 @@ export default [
     ],
     external: ["react", "react-dom"],
     plugins: [
+      postcss(),
       resolve(),
       commonjs(),
       typescript({ tsconfig: "./tsconfig.json" }),

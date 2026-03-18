@@ -99,7 +99,7 @@ function getArch(): string {
     return "aarch64";
   }
 
-  if (process.arch === "x32" || process.arch === "ia32") {
+  if (process.arch === "ia32") {
     return "i686";
   }
 

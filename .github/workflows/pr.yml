@@ -1,0 +1,16 @@
+name: PR Comments
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  pr-info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: PR Info
+        run: |
+          echo "## PR Information"
+          echo "- Author: ${{ github.event.pull_request.user.login }}"
+          echo "- Title: ${{ github.event.pull_request.title }}"
+          echo "- Branch: ${{ github.head_ref }} -> ${{ github.base_ref }}"

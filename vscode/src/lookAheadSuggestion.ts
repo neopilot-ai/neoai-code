@@ -42,7 +42,7 @@ export async function getLookAheadSuggestion(
   { range, text }: SelectedCompletionInfo,
   position: Position,
   cancellationToken: CancellationToken
-): Promise<InlineCompletionList<NeoaiInlineCompletionItem>> {
+): Promise<InlineCompletionList> {
   const textAtRange = document.getText(range);
   const isContainsCompletionInfo = text.startsWith(textAtRange);
 
@@ -81,7 +81,8 @@ export async function getLookAheadSuggestion(
 
   currentLookAheadSuggestion = completion;
 
-  return new InlineCompletionList((completion && [completion]) || []);
+const completionItems = completion ? [completion] : [];
+  return new InlineCompletionList(completionItems);
 }
 
 function findMostRelevantSuggestion(
@@ -111,10 +112,11 @@ function registerTabOverride(): Disposable {
       }
 
       const { range, insertText, command } = currentLookAheadSuggestion;
-      if (range && insertText && command) {
+      if (range && insertText !== undefined && command) {
+        const text = typeof insertText === "string" ? insertText : insertText.value;
         void textEditor
           .insertSnippet(
-            new SnippetString(escapeTabStopSign(insertText)),
+            new SnippetString(escapeTabStopSign(text)),
             range
           )
           .then(() => executeSelectionCommand(command));

@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import NeoaiInlineCompletionItem from "./inlineSuggestions/neoaiInlineCompletionItem";
 import { completionIsAllowed } from "./provideCompletionItems";
 import { getShouldComplete } from "./inlineSuggestions/documentChangesTracker";
 import {
@@ -19,7 +18,7 @@ export default async function provideInlineCompletionItems(
   context: vscode.InlineCompletionContext,
   token: vscode.CancellationToken
 ): Promise<
-  vscode.InlineCompletionList<NeoaiInlineCompletionItem> | undefined
+  vscode.InlineCompletionList | undefined
 > {
   try {
     clearCurrentLookAheadSuggestion();

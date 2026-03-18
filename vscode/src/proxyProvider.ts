@@ -1,6 +1,5 @@
 import {
   HttpsProxyAgent,
-  HttpsProxyAgentOptions,
 } from "https-proxy-agent/dist";
 import { URL } from "url";
 import { workspace } from "vscode";
@@ -13,7 +12,7 @@ type ProxyAgentOptions = {
 
 export default function getHttpsProxyAgent(
   options: ProxyAgentOptions
-): HttpsProxyAgent | undefined {
+): HttpsProxyAgent<any> | undefined {
   const proxySettings = getProxySettings();
 
   if (!proxySettings || !neoaiExtensionProperties.useProxySupport) {
@@ -22,17 +21,17 @@ export default function getHttpsProxyAgent(
 
   const proxyUrl = new URL(proxySettings);
 
-  const proxyOptions: HttpsProxyAgentOptions = {
-    protocol: proxyUrl.protocol,
-    port: proxyUrl.port,
-    hostname: proxyUrl.hostname,
-    pathname: proxyUrl.pathname,
-    ca: options.ca,
-    rejectUnauthorized: !options.ignoreCertificateErrors,
-  };
-
   try {
-    return new HttpsProxyAgent(proxyOptions);
+    const agentOptions: any = {
+      hostname: proxyUrl.hostname,
+      port: proxyUrl.port || undefined,
+      protocol: proxyUrl.protocol,
+    };
+    if (options.ca) {
+      agentOptions.ca = options.ca;
+    }
+    agentOptions.rejectUnauthorized = !options.ignoreCertificateErrors;
+    return new HttpsProxyAgent(agentOptions);
   } catch (e) {
     return undefined;
   }
