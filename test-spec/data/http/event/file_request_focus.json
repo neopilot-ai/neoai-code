@@ -1,0 +1,12 @@
+{
+  "source": "${plugin}",
+  "filename": "${editors.data/whitelisted/file.py.filename}",
+  "text": "import json",
+  "action": "focus",
+  "selections": [
+    {
+      "start": 0,
+      "end": 0
+    }
+  ]
+}
