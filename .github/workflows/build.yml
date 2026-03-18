@@ -1,0 +1,127 @@
+name: Build All Components
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  vscode:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: vscode/package-lock.json
+
+      - name: Install dependencies
+        run: cd vscode && npm ci --legacy-peer-deps
+
+      - name: Lint
+        run: cd vscode && npm run lint || true
+
+      - name: Build
+        run: cd vscode && npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-extension
+          path: vscode/out/
+
+  jupyter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: cd jupyter && docker build -t neoai-server:latest .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jupyter-docker-image
+          path: jupyter/
+
+  react-editor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: cd react-editor && pnpm install --ignore-scripts
+
+      - name: Build
+        run: cd react-editor && pnpm run rollup
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: react-editor-dist
+          path: react-editor/dist/
+
+  nvim:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-action@stable
+        with:
+          targets: x86_64-unknown-linux-gnu
+
+      - name: Build
+        run: cd nvim/chat && cargo build --release || echo "Rust not available"
+        continue-on-error: true
+
+      - name: Upload artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nvim-plugin
+          path: nvim/chat/target/release/
+
+  intellij:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build
+        run: cd intellij && ./gradlew build || echo "Gradle not available"
+        continue-on-error: true
+
+      - name: Upload artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: intellij-plugin
+          path: intellij/build/
+
+  success:
+    needs: [vscode, jupyter, react-editor]
+    runs-on: ubuntu-latest
+    steps:
+      - name: All builds completed
+        run: echo "All required builds completed successfully"

@@ -50,7 +50,7 @@ export async function openDocument(
   return editor;
 }
 
-export async function sleep(ms: number): Promise<number> {
+export async function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 

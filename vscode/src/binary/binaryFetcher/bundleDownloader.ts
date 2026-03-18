@@ -61,7 +61,7 @@ async function getBundlePaths(): Promise<BundlePaths> {
 }
 
 function createBundleDirectory(bundleDirectory: string): Promise<void> {
-  return fs.mkdir(bundleDirectory, { recursive: true });
+  return fs.mkdir(bundleDirectory, { recursive: true }) as Promise<void>;
 }
 
 async function getCurrentVersion(): Promise<string> {

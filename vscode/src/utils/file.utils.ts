@@ -43,13 +43,17 @@ export async function ensureExists(
 
 export function watch(
   path: PathLike,
-  listener: (event: string, filename: string) => void
+  listener: (event: string, filename: string | null) => void
 ): FSWatcher {
   return fsWatch(path, (event, filename) => {
     if (event === "rename") {
-      void asyncExists(join(path.toString(), filename)).then((exists) =>
-        listener(exists ? "created" : "rename", filename)
-      );
+      if (filename) {
+        void asyncExists(join(path.toString(), filename)).then((exists) =>
+          listener(exists ? "created" : "rename", filename)
+        );
+      } else {
+        listener("rename", filename);
+      }
     } else {
       listener(event, filename);
     }

@@ -1,0 +1,87 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  vscode-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: cd vscode && npm ci --legacy-peer-deps
+
+      - name: Build
+        run: cd vscode && npm run build
+
+      - name: Package VSIX
+        run: cd vscode && npx vsce package --no-dependencies
+
+      - name: Publish to Marketplace
+        run: cd vscode && npx vsce publish --no-dependencies
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Publish to Open VSX
+        run: |
+          cd vscode
+          npx ovsx publish -p ${{ secrets.OVSX_TOKEN }} || echo "OVSX publish skipped"
+        continue-on-error: true
+
+  docker-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Extract version
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Build and push
+        run: |
+          docker build -t neoai/neoai-server:latest -t neoai/neoai-server:${{ steps.version.outputs.VERSION }} jupyter/
+          docker push neoai/neoai-server:latest
+          docker push neoai/neoai-server:${{ steps.version.outputs.VERSION }}
+
+  react-editor-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: cd react-editor && pnpm install --ignore-scripts
+
+      - name: Build
+        run: cd react-editor && pnpm run rollup
+
+      - name: Publish to npm
+        run: cd react-editor && npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -14,8 +14,6 @@ export default class NeoaiInlineCompletionItem extends InlineCompletionItem {
 
   snippetContext?: SnippetContext;
 
-  insertText?: string;
-
   constructor(
     text: string,
     suggestionEntry: ResultEntry,

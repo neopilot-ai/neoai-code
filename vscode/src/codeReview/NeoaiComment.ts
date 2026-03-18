@@ -56,6 +56,10 @@ export default class NeoaiComment implements Comment {
       return false;
     }
 
+    if (!thread.range) {
+      return false;
+    }
+
     const oldText = document.getText(thread.range);
 
     if (this.oldValue !== oldText.trim()) {
@@ -86,9 +90,10 @@ export default class NeoaiComment implements Comment {
     thread: CommentThread,
     additionalProperties: Record<string, unknown> = {}
   ): void {
+    const lineIndex = thread.range?.start.line ?? 0;
     void fireEvent({
       name: `code-review-${event}`,
-      lineIndex: thread.range.start.line,
+      lineIndex,
       file: thread.uri.path,
       lineCount: documentOf(thread)?.lineCount,
       ...additionalProperties,
